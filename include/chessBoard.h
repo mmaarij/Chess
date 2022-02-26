@@ -7,7 +7,7 @@ class chessBoard{
     private:
 
     public:
-        int board[9][9];
+        int board[8][8];
         int whiteHome;
         int whiteMoveDirection;
 
