@@ -305,7 +305,8 @@ void gameState::promotePawn(int pawnCode, action& Move){
 }
 
 int gameState::applyMove(action Move){
-    if( Actions.validAction(Move)){
+    if( Actions.validAction(Move))
+    {
         Board.board[Move.toRow][Move.toCol] = Board.board[Move.fromRow][Move.fromCol];
         Board.board[Move.fromRow][Move.fromCol] = 0;
 
