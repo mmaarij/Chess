@@ -30,6 +30,8 @@ void chess::playGame(){
         }
         else{
             player = 1 - player; // Even in case of invalid move change the player
+            player = 1 - player; // Even in case of invalid move change the player
+
         }
     }
 

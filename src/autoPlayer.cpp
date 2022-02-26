@@ -2,6 +2,7 @@
 #include<iostream>
 #include "..\\include\\ENUM.h"
 #include<cstdlib>
+#include <time.h>
 using namespace std;
 
 autoPlayer::autoPlayer(Color playerColor):chessPlayer("Mr. Chess AI", playerColor){
@@ -18,6 +19,7 @@ void autoPlayer::decideMove(gameState* state, action* Move, int maxDepth ){
         return;
     }
 
+    srand(time(0));
     int RandomlySelectedMove = rand()%TotalMoves;
 
     state->Actions.getAction(RandomlySelectedMove,Move);
