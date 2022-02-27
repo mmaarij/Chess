@@ -71,7 +71,7 @@ class CyberPea : public chessPlayer {
         Data minimax (gameState* state, int depth, int alpha, int beta, int &totalComputations)
         {
             //we want to compute all possible moves here.
-            int TotalMoves = state->Actions.getActionCount(); // this == computepossibleactions
+            int TotalMoves = state->Actions.getActionCount();
             actionList tempList;
             action tempAction;
             
