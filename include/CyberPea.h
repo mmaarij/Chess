@@ -4,8 +4,10 @@
 #include"ENUM.h"
 #include <iostream>
 #include <time.h>
+#include <chrono>
 
 using namespace std;
+using namespace std::chrono;
 
 #define PAWN 10
 #define KNIGHT 30
@@ -23,8 +25,10 @@ class Data
 
 class CyberPea : public chessPlayer {
     public:
+
         // Constructor
         CyberPea(Color playerColor = White) {}
+
 
         // Decide Move
         void decideMove(gameState* state, action* Move, int maxDepth)
@@ -38,109 +42,45 @@ class CyberPea : public chessPlayer {
             }
 
             Data bestMove;
-            bestMove = minimax(state, 1);
+            int totalComputations = 0;
+
+            auto start = high_resolution_clock::now(); // start measuring execution time
+
+            bestMove = minimax(state, 5, INT_MIN, INT_MAX, totalComputations); // depth = 12 | alpha = -inf | beta = +inf
             int SelectedMove = bestMove.index;
-            if (bestMove.score == 0)
+
+            auto stop = high_resolution_clock::now(); // stop measuring execution time
+
+            if (bestMove.score == 0) // random moves initially until a piece is able to get captured
             {
                 srand(time(0));
                 SelectedMove = rand() % TotalMoves;
             }
-            
 
+            cout << endl << "Total Computations Taken Into Account: " << totalComputations << endl;
+            auto duration = duration_cast<microseconds>(stop - start);
+            cout << "Execution Time: " << duration.count()/1000000 << " seconds" << endl;
+            
             state->Actions.getAction(SelectedMove, Move);
 
             return;
         }
 
-        // Calculate Score 
-        int evalScoreFirstLvl(gameState* state, int TotalMoves)
-        {
-            int maxIndex = 0;
-            int maxScore = INT_MIN;
 
-            for (int i = 0; i < TotalMoves; i++)
-            {
-                int tempScore = 0;
-                action tempAction;
-                state->Actions.getAction(i, &tempAction);
-
-                // make move on board
-                state->Board.board[tempAction.toRow][tempAction.toCol] = state->Board.board[tempAction.fromRow][tempAction.fromCol];
-                state->Board.board[tempAction.fromRow][tempAction.fromCol] = 0;
-
-                // evaluate move score
-                for (int x = 0; x < 8; x++)
-                {
-                    for (int y = 0; y < 8; y++)
-                    {
-                        if (state->Board.board[x][y] == 1)
-                            tempScore += PAWN;
-                        else if (state->Board.board[x][y] == -1)
-                            tempScore -= PAWN;
-
-                        else if (state->Board.board[x][y] == 4)
-                            tempScore += ROOK;
-                        else if (state->Board.board[x][y] == -4)
-                            tempScore -= ROOK;
-
-                        else if (state->Board.board[x][y] == 2)
-                            tempScore += KNIGHT;
-                        else if (state->Board.board[x][y] == -2)
-                            tempScore -= KNIGHT;
-
-                        else if (state->Board.board[x][y] == 3)
-                            tempScore += BISHOP;
-                        else if (state->Board.board[x][y] == -3)
-                            tempScore -= BISHOP;
-
-                        else if (state->Board.board[x][y] == 5)
-                            tempScore += QUEEN;
-                        else if (state->Board.board[x][y] == -5)
-                            tempScore -= QUEEN;
-
-                        else if (state->Board.board[x][y] == 6)
-                            tempScore += KING;
-                        else if (state->Board.board[x][y] == -6)
-                            tempScore -= KING;
-                    }
-                }
-
-                // if move better than any prev then store new move
-                if (tempScore > maxScore)
-                {
-                    maxScore = tempScore;
-                    maxIndex = i;
-                }
-
-                // undo move on board
-                state->Board.board[tempAction.fromRow][tempAction.fromCol] = state->Board.board[tempAction.toRow][tempAction.toCol];
-                state->Board.board[tempAction.toRow][tempAction.toCol] = 0;
-
-            }
-
-            if (maxScore == 0)
-            {
-                srand(time(0));
-                maxIndex = rand() % TotalMoves;
-            }
-            return maxIndex;
-        }
-
-
-        Data minimax(gameState* state, int depth)
+        // Minimax
+        Data minimax (gameState* state, int depth, int alpha, int beta, int &totalComputations)
         {
             //we want to compute all possible moves here.
             int TotalMoves = state->Actions.getActionCount(); // this == computepossibleactions
             actionList tempList;
             action tempAction;
             
-            
-
+            totalComputations++;
 
             if (depth == 0 || TotalMoves == 0) // base case
             {
                 Data leaf;
-                leaf.score = calcScore(state);
+                leaf.score = evaluateScore(state);
                 return leaf;
             }
             else
@@ -153,70 +93,119 @@ class CyberPea : public chessPlayer {
                 }
             }
 
-            if (state->getPlayer() == White)
+            if (state->getPlayer() == White) // ******************** MAXIMIZING PLAYER ********************
             {
                 Data maxEval;
                 maxEval.score = INT_MIN;
 
                 for (int i = 0; i < TotalMoves; i++)
                 {
-                    state->Actions.getAction(i, &tempAction);
+                    // backup board state
+                    int backupBoard[8][8];
+                    for (int r = 0; r < 8; r++)
+                    {
+                        for (int c = 0; c < 8; c++)
+                        {
+                            backupBoard[r][c] = state->Board.board[r][c];
+                        }
+                    }
 
+                    //select move from list
+                    state->Actions.getAction(i, &tempAction);
                     // make look-ahead move on board and change player
                     state->applyMove(tempAction);
+                    
+                    // ********** RECURSIVE CALL **********
+                    Data eval = minimax(state, depth - 1, alpha, beta, totalComputations);
 
-                    Data eval = minimax(state, depth - 1);
-
-                    // undo look-ahead move on board
-                    state->Board.board[tempAction.fromRow][tempAction.fromCol] = state->Board.board[tempAction.toRow][tempAction.toCol];
-                    state->Board.board[tempAction.toRow][tempAction.toCol] = 0;
+                    // undo look-ahead move on board // restore backed up board
+                    for (int r = 0; r < 8; r++)
+                    {
+                        for (int c = 0; c < 8; c++)
+                        {
+                            state->Board.board[r][c] = backupBoard[r][c];
+                        }
+                    }
                     state->setPlayer(White);
                     state->Actions.resetActions();
+
+                    //restore action list
                     for (int j = 0; j < TotalMoves; j++)
                     {
                         tempList.getAction(j, &tempAction);
                         state->Actions.addAction(tempAction);
                     }
 
+                    // select max
                     if (eval.score > maxEval.score)
                     {
                         maxEval.score = eval.score;
                         maxEval.index = i;
                     }
+                    
+                    // alpha pruning
+                    alpha = max(alpha, eval.score);
+                    if (beta <= alpha)
+                        break;
+
                 }
                 return maxEval;
             }
 
-            else
+            else                             // ******************** MINIMIZING PLAYER ********************
             {
                 Data minEval;
                 minEval.score = INT_MAX;
 
                 for (int i = 0; i < TotalMoves; i++)
                 {
-                    state->Actions.getAction(i, &tempAction);
+                    // backup board state
+                    int backupBoard[8][8];
+                    for (int r = 0; r < 8; r++)
+                    {
+                        for (int c = 0; c < 8; c++)
+                        {
+                            backupBoard[r][c] = state->Board.board[r][c];
+                        }
+                    }
 
-                    // make look-ahead move on board and change player
+                    //select move from list
+                    state->Actions.getAction(i, &tempAction);
+                    // apply selected look-ahead move on board and change player
                     state->applyMove(tempAction);
 
-                    Data eval = minimax(state, depth - 1);
+                    // ********** RECURSIVE CALL **********
+                    Data eval = minimax(state, depth - 1, alpha, beta, totalComputations);
 
-                    // undo look-ahead move on board
-                    state->Board.board[tempAction.fromRow][tempAction.fromCol] = state->Board.board[tempAction.toRow][tempAction.toCol];
-                    state->Board.board[tempAction.toRow][tempAction.toCol] = 0;
+                    // undo look-ahead move on board // restore backed up board
+                    for (int r = 0; r < 8; r++)
+                    {
+                        for (int c = 0; c < 8; c++)
+                        {
+                            state->Board.board[r][c] = backupBoard[r][c];
+                        }
+                    }
                     state->setPlayer(Black);
                     state->Actions.resetActions();
+
+                    //restore action list
                     for (int j = 0; j < TotalMoves; j++)
                     {
                         tempList.getAction(j, &tempAction);
                         state->Actions.addAction(tempAction);
                     }
 
+                    // select min
                     if (eval.score < minEval.score)
                     {
                         minEval.score = eval.score;
                         minEval.index = i;
                     }
+
+                    // beta pruning
+                    beta = min(beta, eval.score);
+                    if (beta <= alpha)
+                        break;
                 }
                 return minEval;
             }
@@ -224,7 +213,8 @@ class CyberPea : public chessPlayer {
         }
 
 
-        int calcScore(gameState* state)
+        // Evaluate Function
+        int evaluateScore(gameState* state)
         {
             int tempScore = 0;
 
