@@ -24,17 +24,144 @@ class Data
 };
 
 class CyberPea : public chessPlayer {
+
+    private:
+
+        // ********** HEATMAPS **********
+
+        float blackPawn[8][8] =
+        {
+            {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+            {5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0},
+            {1.0, 1.0, 2.0, 3.0, 3.0, 2.0, 1.0, 1.0},
+            {0.5, 0.5, 1.0, 2.5, 2.5, 1.0, 0.5, 0.5},
+            {0.0, 0.0, 0.0, 2.0, 2.0, 0.0, 0.0, 0.0},
+            {0.5, -0.5, -1.0, 0.0, 0.0, -1.0, -0.5, 0.5},
+            {0.5, 1.0, 1.0, -2.0, -2.0, 1.0, 1.0, 0.5},
+            {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+        };
+
+        float whitePawn[8][8] =
+        {
+            {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.5, 1.0, 1.0, -2.0, -2.0, 1.0, 1.0, 0.5},
+            {0.5, -0.5, -1.0, 0.0, 0.0, -1.0, -0.5, 0.5},
+            {0.0, 0.0, 0.0, 2.0, 2.0, 0.0, 0.0, 0.0},
+            {0.5, 0.5, 1.0, 2.5, 2.5, 1.0, 0.5, 0.5},
+            {1.0, 1.0, 2.0, 3.0, 3.0, 2.0, 1.0, 1.0},
+            {5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+        };
+
+        float Knight[8][8] =
+        {
+            {-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0},
+            {-4.0, -2.0, 0.0, 0.0, 0.0, 0.0, -2.0, -4.0},
+            {-3.0, 0.0, 1.0, 1.5, 1.5, 1.0, 0.0, -3.0},
+            {-3.0, 0.5, 1.5, 2.0, 2.0, 1.5, 0.5, -3.0},
+            {-3.0, 0.0, 1.5, 2.0, 2.0, 1.5, 0.0, -3.0},
+            {-3.0, 0.5, 1.0, 1.5, 1.5, 1.0, 0.5, -3.0},
+            {-4.0, -2.0, 0.0, 0.5, 0.5, 0.0, -2.0, -4.0},
+            {-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0}
+        };
+
+        float blackBishop[8][8] =
+        {
+            { -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0},
+            {-1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0},
+            {-1.0, 0.0, 0.5, 1.0, 1.0, 0.5, 0.0, -1.0},
+            {-1.0, 0.5, 0.5, 1.0, 1.0, 0.5, 0.5, -1.0},
+            {-1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, -1.0},
+            {-1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0},
+            {-1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, -1.0},
+            {-2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0}
+        };
+
+        float whiteBishop[8][8] =
+        {
+            {-2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0},
+            {-1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, -1.0},
+            {-1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0},
+            {-1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, -1.0},
+            {-1.0, 0.5, 0.5, 1.0, 1.0, 0.5, 0.5, -1.0},
+            {-1.0, 0.0, 0.5, 1.0, 1.0, 0.5, 0.0, -1.0},
+            {-1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0},
+            { -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0}
+        };
+
+        float blackRook[8][8] =
+        {
+            { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5},
+            {-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
+            {-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
+            {-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
+            {-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
+            {-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
+            {0.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0}
+        };
+
+        float whiteRook[8][8] =
+        {
+            {0.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0},
+            {-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
+            {-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
+            {-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
+            {-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
+            {-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
+            {0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5},
+            { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+        };
+
+        float Queen[8][8] =
+        {
+            { -2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0},
+            {-1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0},
+            {-1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -1.0},
+            {-0.5, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -0.5},
+            {0.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -0.5},
+            {-1.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.0, -1.0},
+            {-1.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, -1.0},
+            {-2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0}
+        };
+
+        float blackKing[8][8] =
+        {
+            { -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0},
+            {-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0},
+            {-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0},
+            {-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0},
+            {-2.0, -3.0, -3.0, -4.0, -4.0, -3.0, -3.0, -2.0},
+            {-1.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -1.0},
+            {2.0, 2.0, 0.0, 0.0, 0.0, 0.0, 2.0, 2.0},
+            {2.0, 3.0, 1.0, 0.0, 0.0, 1.0, 3.0, 2.0}
+        };
+
+        float whiteKing[8][8] =
+        {
+            {2.0, 3.0, 1.0, 0.0, 0.0, 1.0, 3.0, 2.0},
+            {2.0, 2.0, 0.0, 0.0, 0.0, 0.0, 2.0, 2.0},
+            {-1.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -1.0},
+            {-2.0, -3.0, -3.0, -4.0, -4.0, -3.0, -3.0, -2.0},
+            {-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0},
+            {-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0},
+            {-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0},
+            { -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0}
+        };
+
+
     public:
 
         // Constructor
-        CyberPea(Color playerColor = White) {}
+        CyberPea(Color playerColor = White):chessPlayer("Mr. Chess AI", playerColor) {}
 
 
         // Decide Move
         void decideMove(gameState* state, action* Move, int maxDepth)
         {
             int TotalMoves = state->Actions.getActionCount(); //= state->computePossibleActions();
-            cout << endl << "Total Possible Moves " << TotalMoves;
+            cout << endl << "Total Possible Moves " << TotalMoves << endl;
 
             if (TotalMoves == 0) {
                 Move->fromRow = Move->fromCol = Move->toRow = Move->toCol = 0;
@@ -44,22 +171,19 @@ class CyberPea : public chessPlayer {
             Data bestMove;
             int totalComputations = 0;
 
+            int DEPTH = 5;
+            cout << "Search Depth: " << DEPTH << endl;
+
             auto start = high_resolution_clock::now(); // start measuring execution time
 
-            bestMove = minimax(state, 5, INT_MIN, INT_MAX, totalComputations); // depth = 12 | alpha = -inf | beta = +inf
+            bestMove = minimax(state, 5, INT_MIN, INT_MAX, totalComputations); // depth = 5 | alpha = -inf | beta = +inf
             int SelectedMove = bestMove.index;
 
             auto stop = high_resolution_clock::now(); // stop measuring execution time
 
-            if (bestMove.score == 0) // random moves initially until a piece is able to get captured
-            {
-                srand(time(0));
-                SelectedMove = rand() % TotalMoves;
-            }
-
-            cout << endl << "Total Computations Taken Into Account: " << totalComputations << endl;
-            auto duration = duration_cast<microseconds>(stop - start);
-            cout << "Execution Time: " << duration.count()/1000000 << " seconds" << endl;
+            cout << "Total Computations Taken Into Account: " << totalComputations << endl;
+            auto duration = duration_cast <milliseconds> (stop - start);
+            cout << "Execution Time: " << duration.count() << " milliseconds" << endl;
             
             state->Actions.getAction(SelectedMove, Move);
 
@@ -213,7 +337,7 @@ class CyberPea : public chessPlayer {
         }
 
 
-        // Evaluate Function
+        // Evaluate Function with Piece Scoing and Positional Evaluation (Heat Maps)
         int evaluateScore(gameState* state)
         {
             int tempScore = 0;
@@ -223,35 +347,77 @@ class CyberPea : public chessPlayer {
             {
                 for (int y = 0; y < 8; y++)
                 {
-                    if (state->Board.board[x][y] == 1)
+                    if (state->Board.board[x][y] == 1) // WHITE PAWN
+                    {
                         tempScore += PAWN;
-                    else if (state->Board.board[x][y] == -1)
+                        tempScore += (int)(whitePawn[x][y] * 2);
+                    }
+
+                    else if (state->Board.board[x][y] == -1) // BLACK PAWN
+                    {
                         tempScore -= PAWN;
-
-                    else if (state->Board.board[x][y] == 4)
+                        tempScore += (int)(blackPawn[x][y] * 2);
+                    }
+                        
+                    else if (state->Board.board[x][y] == 4) // WHITE ROOK
+                    {
                         tempScore += ROOK;
-                    else if (state->Board.board[x][y] == -4)
+                        tempScore += (int)(whiteRook[x][y] * 2);
+                    }
+
+                    else if (state->Board.board[x][y] == -4) // BLACK ROOK
+                    {
                         tempScore -= ROOK;
+                        tempScore += (int)(blackRook[x][y] * 2);
+                    }
 
-                    else if (state->Board.board[x][y] == 2)
+                    else if (state->Board.board[x][y] == 2) // WHITE KNIGHT
+                    {
                         tempScore += KNIGHT;
-                    else if (state->Board.board[x][y] == -2)
+                        tempScore += (int)(Knight[x][y] * 2);
+                    }
+
+                    else if (state->Board.board[x][y] == -2) // BLACK KNIGHT
+                    {
                         tempScore -= KNIGHT;
+                        tempScore += (int)(Knight[x][y] * 2);
+                    }
 
-                    else if (state->Board.board[x][y] == 3)
+                    else if (state->Board.board[x][y] == 3) // WHITE BISHOP
+                    {
                         tempScore += BISHOP;
-                    else if (state->Board.board[x][y] == -3)
+                        tempScore += (int)(whiteBishop[x][y] * 2);
+                    }
+
+                    else if (state->Board.board[x][y] == -3)  // BLACK BISHOP
+                    {
                         tempScore -= BISHOP;
+                        tempScore += (int)(blackBishop[x][y] * 2);
+                    }
 
-                    else if (state->Board.board[x][y] == 5)
+                    else if (state->Board.board[x][y] == 5)  // WHITE QUEEN
+                    {
                         tempScore += QUEEN;
-                    else if (state->Board.board[x][y] == -5)
-                        tempScore -= QUEEN;
+                        tempScore += (int)(Queen[x][y] * 2);
+                    }
 
-                    else if (state->Board.board[x][y] == 6)
+                    else if (state->Board.board[x][y] == -5) // BLACK QUEEN
+                    {
+                        tempScore -= QUEEN;
+                        tempScore += (int)(Queen[x][y] * 2);
+                    }
+
+                    else if (state->Board.board[x][y] == 6) // WHITE KING
+                    {
                         tempScore += KING;
-                    else if (state->Board.board[x][y] == -6)
+                        tempScore += (int)(whiteKing[x][y] * 2);
+                    }
+
+                    else if (state->Board.board[x][y] == -6) // BLACK KING
+                    {
                         tempScore -= KING;
+                        tempScore += (int)(blackKing[x][y] * 2);
+                    }
                 }
             }
 

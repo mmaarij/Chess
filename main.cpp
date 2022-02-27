@@ -8,10 +8,12 @@
 
 using namespace std;
 
-int main(){
+int main()
+{
     chess Game;
-    Game.Players[0] = new humanPlayer("CyberPea", Black);
+    Game.Players[0] = new humanPlayer("Mojj & Meow", Black);
     Game.Players[1] = new CyberPea();
     Game.playGame();
+
     return 0;
 }
