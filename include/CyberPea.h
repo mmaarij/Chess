@@ -5,6 +5,7 @@
 #include <iostream>
 #include <time.h>
 #include <chrono>
+#include <fstream>
 
 using namespace std;
 using namespace std::chrono;
@@ -15,6 +16,7 @@ using namespace std::chrono;
 #define ROOK 50
 #define QUEEN 90
 #define KING 900
+#define CHECK 900
 
 class Data
 {
@@ -31,11 +33,11 @@ class CyberPea : public chessPlayer {
 
         float blackPawn[8][8] =
         {
-            {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+            {7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0},
             {5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0},
             {1.0, 1.0, 2.0, 3.0, 3.0, 2.0, 1.0, 1.0},
             {0.5, 0.5, 1.0, 2.5, 2.5, 1.0, 0.5, 0.5},
-            {0.0, 0.0, 0.0, 2.0, 2.0, 0.0, 0.0, 0.0},
+            {1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 1.0},
             {0.5, -0.5, -1.0, 0.0, 0.0, -1.0, -0.5, 0.5},
             {0.5, 1.0, 1.0, -2.0, -2.0, 1.0, 1.0, 0.5},
             {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
@@ -46,11 +48,11 @@ class CyberPea : public chessPlayer {
             {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
             {0.5, 1.0, 1.0, -2.0, -2.0, 1.0, 1.0, 0.5},
             {0.5, -0.5, -1.0, 0.0, 0.0, -1.0, -0.5, 0.5},
-            {0.0, 0.0, 0.0, 2.0, 2.0, 0.0, 0.0, 0.0},
+            {1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 1.0},
             {0.5, 0.5, 1.0, 2.5, 2.5, 1.0, 0.5, 0.5},
             {1.0, 1.0, 2.0, 3.0, 3.0, 2.0, 1.0, 1.0},
             {5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0},
-            {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+            {7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0}
         };
 
         float Knight[8][8] =
@@ -91,7 +93,7 @@ class CyberPea : public chessPlayer {
 
         float blackRook[8][8] =
         {
-            { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
             {0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5},
             {-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
             {-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
@@ -151,19 +153,29 @@ class CyberPea : public chessPlayer {
         };
 
 
+        int DEPTH;
+
     public:
 
         // Constructor
-        CyberPea(Color playerColor = White):chessPlayer("Mr. Chess AI", playerColor) {}
+        CyberPea(int depth, Color playerColor = White):chessPlayer("CyberPea", playerColor) {
+            this->DEPTH = depth;
+
+            // open and clear outfile
+            ofstream outfile;
+            outfile.open("gameMoves.txt", std::ofstream::out | std::ofstream::trunc);
+            outfile.close();
+        }
 
 
         // Decide Move
         void decideMove(gameState* state, action* Move, int maxDepth)
         {
             int TotalMoves = state->Actions.getActionCount(); //= state->computePossibleActions();
-            cout << endl << "Total Possible Moves " << TotalMoves << endl;
+            cout << endl << "Total Possible Moves: " << TotalMoves << endl;
 
-            if (TotalMoves == 0) {
+            if (TotalMoves == 0)
+            {
                 Move->fromRow = Move->fromCol = Move->toRow = Move->toCol = 0;
                 return;
             }
@@ -171,7 +183,6 @@ class CyberPea : public chessPlayer {
             Data bestMove;
             int totalComputations = 0;
 
-            int DEPTH = 3; // ********** SET DEPTH HERE **********
             cout << "Search Depth: " << DEPTH << endl;
 
             auto start = high_resolution_clock::now(); // start measuring execution time
@@ -181,9 +192,9 @@ class CyberPea : public chessPlayer {
 
             auto stop = high_resolution_clock::now(); // stop measuring execution time
 
-            cout << "Total Computations Taken Into Account: " << totalComputations << endl;
+            // cout << "Total Computations Taken Into Account: " << totalComputations << endl; // *** moved this inside minmax function with carrige return ***
             auto duration = duration_cast <milliseconds> (stop - start);
-            cout << "Execution Time: " << duration.count() << " milliseconds" << endl;
+            cout << endl << "Execution Time: " << duration.count() << " milliseconds" << endl;
             
             state->Actions.getAction(SelectedMove, Move);
 
@@ -196,49 +207,55 @@ class CyberPea : public chessPlayer {
 
         void showMove(int piece, action * Move)
         {
-            cout << "Move ";
+            string moveMade = "Move ";
 
             if (piece > 0)
-                cout << "White ";
+                moveMade += "White ";
             else if (piece < 0)
-                cout << "Black ";
+                moveMade += "Black ";
 
             switch (piece)
             {
             case 4:
             case -4:
-                cout << "Rook";
+                moveMade += "Rook";
                 break;
 
             case 2:
             case -2:
-                cout << "Knight";
+                moveMade += "Knight";
                 break;
 
             case 3:
             case -3:
-                cout << "Bishop";
+                moveMade += "Bishop";
                 break;
 
             case 5:
             case -5:
-                cout << "Queen";
+                moveMade += "Queen";
                 break;
 
             case 6:
             case -6:
-                cout << "King";
+                moveMade += "King";
                 break;
 
             case 1:
             case -1:
-                cout << "Pawn";
+                moveMade += "Pawn";
                 break;
 
             }
 
-            cout << " (" << Move->fromRow << ", " << Move->fromCol << ") To (" << Move->toRow << ", " << Move->toCol << ")" << endl;
+            moveMade = moveMade + " (" + to_string(Move->fromRow) + ", " + to_string(Move->fromCol) + ") To (" + to_string(Move->toRow) + ", " + to_string(Move->toCol) + ")";
 
+            cout << moveMade << endl;
+
+            ofstream outfile;
+            outfile.open("gameMoves.txt", std::ios_base::app); // append instead of overwrite
+            outfile << moveMade << endl;
+            outfile.close();
         }
 
 
@@ -251,6 +268,7 @@ class CyberPea : public chessPlayer {
             action tempAction;
             
             totalComputations++;
+            cout << "\rTotal Computations Taken Into Account: " << totalComputations;
 
             if (depth == 0 || TotalMoves == 0) // base case
             {
@@ -472,6 +490,24 @@ class CyberPea : public chessPlayer {
                 }
             }
 
+            // see if check state reached
+            Color player = state->getPlayer();
+            Color oppose;
+            if (player == White)
+                oppose = Black;
+            else
+                oppose = White;
+
+            if (state->kingUnderThreat(oppose)) // if opposing king threatened (check) then that's a very good move
+            {
+                if (player == White)
+                    tempScore += CHECK; // maximise for white
+                else
+                    tempScore -= CHECK; // minimise for black
+            }
+
+
+            // return final evaluation / score
             return tempScore;
         }
 };
