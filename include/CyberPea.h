@@ -187,7 +187,58 @@ class CyberPea : public chessPlayer {
             
             state->Actions.getAction(SelectedMove, Move);
 
+            int piece = state->Board.board[Move->fromRow][Move->fromCol];
+            showMove(piece, Move);
+            
             return;
+        }
+
+
+        void showMove(int piece, action * Move)
+        {
+            cout << "Move ";
+
+            if (piece > 0)
+                cout << "White ";
+            else if (piece < 0)
+                cout << "Black ";
+
+            switch (piece)
+            {
+            case 4:
+            case -4:
+                cout << "Rook";
+                break;
+
+            case 2:
+            case -2:
+                cout << "Knight";
+                break;
+
+            case 3:
+            case -3:
+                cout << "Bishop";
+                break;
+
+            case 5:
+            case -5:
+                cout << "Queen";
+                break;
+
+            case 6:
+            case -6:
+                cout << "King";
+                break;
+
+            case 1:
+            case -1:
+                cout << "Pawn";
+                break;
+
+            }
+
+            cout << " (" << Move->fromRow << ", " << Move->fromCol << ") To (" << Move->toRow << ", " << Move->toCol << ")" << endl;
+
         }
 
 
