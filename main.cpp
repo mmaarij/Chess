@@ -11,7 +11,8 @@ using namespace std;
 int main()
 {
     chess Game;
-    Game.Players[0] = new humanPlayer("Mojj & Meow", Black);
+    //Game.Players[0] = new humanPlayer("Mojj & Meow", Black);
+    Game.Players[0] = new CyberPea(Black);
     Game.Players[1] = new CyberPea();
     Game.playGame();
 

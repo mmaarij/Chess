@@ -171,12 +171,12 @@ class CyberPea : public chessPlayer {
             Data bestMove;
             int totalComputations = 0;
 
-            int DEPTH = 5;
+            int DEPTH = 3; // ********** SET DEPTH HERE **********
             cout << "Search Depth: " << DEPTH << endl;
 
             auto start = high_resolution_clock::now(); // start measuring execution time
 
-            bestMove = minimax(state, 5, INT_MIN, INT_MAX, totalComputations); // depth = 5 | alpha = -inf | beta = +inf
+            bestMove = minimax(state, DEPTH, INT_MIN, INT_MAX, totalComputations); // alpha = -inf | beta = +inf
             int SelectedMove = bestMove.index;
 
             auto stop = high_resolution_clock::now(); // stop measuring execution time
