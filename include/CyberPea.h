@@ -191,7 +191,7 @@ class CyberPea : public chessPlayer {
         }
 
 
-        // Minimax
+        // Minimax + Alpha Beta Pruning
         Data minimax (gameState* state, int depth, int alpha, int beta, int &totalComputations)
         {
             //we want to compute all possible moves here.
