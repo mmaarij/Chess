@@ -5,7 +5,6 @@
 #include <iostream>
 #include <time.h>
 #include <chrono>
-#include <fstream>
 
 using namespace std;
 using namespace std::chrono;
@@ -15,13 +14,13 @@ using namespace std::chrono;
 #define BISHOP 30
 #define ROOK 50
 #define QUEEN 90
-#define KING 900
-#define CHECK 900
+#define KING 1000
+#define CHECK 1000
 
 class Data
 {
     public:
-        int score;
+        float score;
         int index;
 };
 
@@ -160,11 +159,6 @@ class CyberPea : public chessPlayer {
         // Constructor
         CyberPea(int depth, Color playerColor = White):chessPlayer("CyberPea", playerColor) {
             this->DEPTH = depth;
-
-            // open and clear outfile
-            ofstream outfile;
-            outfile.open("gameMoves.txt", std::ofstream::out | std::ofstream::trunc);
-            outfile.close();
         }
 
 
@@ -251,16 +245,11 @@ class CyberPea : public chessPlayer {
             moveMade = moveMade + " (" + to_string(Move->fromRow) + ", " + to_string(Move->fromCol) + ") To (" + to_string(Move->toRow) + ", " + to_string(Move->toCol) + ")";
 
             cout << moveMade << endl;
-
-            ofstream outfile;
-            outfile.open("gameMoves.txt", std::ios_base::app); // append instead of overwrite
-            outfile << moveMade << endl;
-            outfile.close();
         }
 
 
         // Minimax + Alpha Beta Pruning
-        Data minimax (gameState* state, int depth, int alpha, int beta, int &totalComputations)
+        Data minimax (gameState* state, int depth, float alpha, float beta, int &totalComputations)
         {
             //we want to compute all possible moves here.
             int TotalMoves = state->Actions.getActionCount();
@@ -407,9 +396,9 @@ class CyberPea : public chessPlayer {
 
 
         // Evaluate Function with Piece Scoing and Positional Evaluation (Heat Maps)
-        int evaluateScore(gameState* state)
+        float evaluateScore(gameState* state)
         {
-            int tempScore = 0;
+            float tempScore = 0;
 
             // evaluate move score
             for (int x = 0; x < 8; x++)
@@ -419,73 +408,73 @@ class CyberPea : public chessPlayer {
                     if (state->Board.board[x][y] == 1) // WHITE PAWN
                     {
                         tempScore += PAWN;
-                        tempScore += (int)(whitePawn[x][y] * 2);
+                        tempScore += (whitePawn[x][y] * 2);
                     }
 
                     else if (state->Board.board[x][y] == -1) // BLACK PAWN
                     {
                         tempScore -= PAWN;
-                        tempScore += (int)(blackPawn[x][y] * 2);
+                        tempScore -= (blackPawn[x][y] * 2);
                     }
                         
                     else if (state->Board.board[x][y] == 4) // WHITE ROOK
                     {
                         tempScore += ROOK;
-                        tempScore += (int)(whiteRook[x][y] * 2);
+                        tempScore += (whiteRook[x][y] * 2);
                     }
 
                     else if (state->Board.board[x][y] == -4) // BLACK ROOK
                     {
                         tempScore -= ROOK;
-                        tempScore += (int)(blackRook[x][y] * 2);
+                        tempScore -= (blackRook[x][y] * 2);
                     }
 
                     else if (state->Board.board[x][y] == 2) // WHITE KNIGHT
                     {
                         tempScore += KNIGHT;
-                        tempScore += (int)(Knight[x][y] * 2);
+                        tempScore += (Knight[x][y] * 2);
                     }
 
                     else if (state->Board.board[x][y] == -2) // BLACK KNIGHT
                     {
                         tempScore -= KNIGHT;
-                        tempScore += (int)(Knight[x][y] * 2);
+                        tempScore -= (Knight[x][y] * 2);
                     }
 
                     else if (state->Board.board[x][y] == 3) // WHITE BISHOP
                     {
                         tempScore += BISHOP;
-                        tempScore += (int)(whiteBishop[x][y] * 2);
+                        tempScore += (whiteBishop[x][y] * 2);
                     }
 
                     else if (state->Board.board[x][y] == -3)  // BLACK BISHOP
                     {
                         tempScore -= BISHOP;
-                        tempScore += (int)(blackBishop[x][y] * 2);
+                        tempScore -= (blackBishop[x][y] * 2);
                     }
 
                     else if (state->Board.board[x][y] == 5)  // WHITE QUEEN
                     {
                         tempScore += QUEEN;
-                        tempScore += (int)(Queen[x][y] * 2);
+                        tempScore += (Queen[x][y] * 2);
                     }
 
                     else if (state->Board.board[x][y] == -5) // BLACK QUEEN
                     {
                         tempScore -= QUEEN;
-                        tempScore += (int)(Queen[x][y] * 2);
+                        tempScore -= (Queen[x][y] * 2);
                     }
 
                     else if (state->Board.board[x][y] == 6) // WHITE KING
                     {
                         tempScore += KING;
-                        tempScore += (int)(whiteKing[x][y] * 2);
+                        tempScore += (whiteKing[x][y] * 2);
                     }
 
                     else if (state->Board.board[x][y] == -6) // BLACK KING
                     {
                         tempScore -= KING;
-                        tempScore += (int)(blackKing[x][y] * 2);
+                        tempScore -= (blackKing[x][y] * 2);
                     }
                 }
             }
@@ -514,3 +503,18 @@ class CyberPea : public chessPlayer {
 
 
 #endif // CYBERPEA_H
+
+
+/*
+
+    Artificial Intelligence
+    Section G
+    Assignment #1
+
+    Completed By Team CyberPea
+
+    Members
+    Muhammad Maarij 19L-2347
+    Mohib Ali Kazmi 19L-1246
+
+*/

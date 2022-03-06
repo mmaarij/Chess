@@ -46,7 +46,7 @@ void UI::showPiece(int pieceCode){
 void UI::updateView(string whitePlayerName, string blackPlayerName){
 
     cout << endl;
-    system("pause");
+    //system("pause");
     system("cls");
 
     for(int i=0; i<80;i++)
